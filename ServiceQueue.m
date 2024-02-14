@@ -7,15 +7,16 @@ classdef ServiceQueue < handle
         % ArrivalRate - Customers arrive according to a Poisson process.
         % The inter-arrival time is exponentially distributed with a rate
         % parameter of ArrivalRate.
-        ArrivalRate = 0.5;
+        ArrivalRate = 1/4;
 
         % DepartureRate - When a customer arrives, the time it takes for
         % them to be served is exponentially distributed with a rate
         % parameter of DepartureRate.
-        DepartureRate = 1/1.5;
+        DepartureRate = 1/4; 
+        %Could add another departure rate with helper
 
         % NumServers - How many identical serving stations are available.
-        NumServers = 1;
+        NumServers = 2;
 
         % LogInterval - Approximately how many time units between log
         % entries.  Log events are scheduled so that when one log entry is
@@ -181,9 +182,29 @@ classdef ServiceQueue < handle
             % time.
             c = arrival.Customer;
             c.ArrivalTime = obj.Time;
+            NWaiting = length(obj.Waiting);
+            NInService = obj.NumServers - sum(obj.ServerAvailable);
+            NTotal = NWaiting + NInService;  
+            randomnumber = rand();
 
-            % The Customer is appended to the list of waiting customers.
-            obj.Waiting{end+1} = c;
+            if NTotal == 0   
+                obj.Waiting{end+1} = c;
+            elseif NTotal == 1 
+                if randomnumber > (1/4)
+                    obj.Waiting{end + 1} = c;
+                end
+            elseif NTotal == 2    
+                if randomnumber > (2/4)
+                    obj.Waiting{end + 1} = c;
+                end
+           elseif NTotal == 3
+               if randomnumber > (3/4)
+                   obj.Waiting{end + 1} = c;
+               end
+            elseif NTotal == 4
+            end
+
+            
 
             % Construct the next Customer that will arrive.
             % Its Id is one higher than the one that just arrived.
@@ -242,6 +263,7 @@ classdef ServiceQueue < handle
             % Sample ServiceDist to get the time it will take to serve this
             % customer.
             service_time = random(obj.ServiceDist);
+            %This might be where you can add a helper or other features!!
 
             % Schedule a Departure event so that after the service time,
             % the customer at station j departs.

@@ -1,4 +1,4 @@
-classdef (Abstract=true) Event
+classdef (Abstract = true) Event
     % Event Abstract base class for all events.
 
     properties

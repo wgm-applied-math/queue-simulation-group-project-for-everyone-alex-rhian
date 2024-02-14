@@ -51,12 +51,15 @@ NInSystem = vertcat(NInSystemSamples{:});
 % Start with a histogram.  The result is an empirical PDF, that is, the
 % area of the bar at horizontal index n is proportional to the fraction of
 % samples for which there were n customers in the system.
-h = histogram(NInSystem, Normalization="probability", BinMethod="integers");
+h = histogram(NInSystem, Normalization = "probability", BinMethod = "integers");
 
 % MATLAB-ism: Once you've created a picture, you can use "hold on" to cause
 % further plotting function to work with the same picture rather than
 % create a new one.
 hold on;
+theoryprob = [.40315, .40315, .15118, .03779, .004716];
+xvaluesshifted = [0, 1, 2, 3, 4];
+plot(xvaluesshifted, theoryprob, 'o');
 
 % For comparison, plot the theoretical results for a M/M/1 queue.
 % The agreement isn't all that good unless you run for a long time, say
