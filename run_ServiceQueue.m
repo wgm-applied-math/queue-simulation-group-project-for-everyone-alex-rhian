@@ -48,6 +48,30 @@ NInSystem = vertcat(NInSystemSamples{:});
 
 %% Make a picture
 
+W = zeros(1, 145);
+for n = 1:145
+    W(1, n) = q.Served{1, n}.DepartureTime - q.Served{1, n}.ArrivalTime;
+end
+
+totaltimeinsystem = sum(W)/145;
+
+WQ = zeros(1, 145);
+for n = 1:145
+    WQ(1, n) = q.Served{1, n}.BeginServiceTime - q.Served{1, n}.ArrivalTime;
+end
+
+totaltimewaiting = sum(WQ)/145;
+
+TotalServed = zeros(1, 145);
+for n = 1:145
+    TotalServed(1, n) = q.Served{1, n}.DepartureTime - q.Served{1, n}.BeginServiceTime;
+end
+
+timeserved = sum(TotalServed)/145;
+
+SimulationSteadyStates = [totaltimeinsystem, totaltimewaiting, TotalServed];
+TheoreticalSteadyStates = [6.24, 2.31, 3.94];
+
 % Start with a histogram.  The result is an empirical PDF, that is, the
 % area of the bar at horizontal index n is proportional to the fraction of
 % samples for which there were n customers in the system.
@@ -57,8 +81,8 @@ h = histogram(NInSystem, Normalization = "probability", BinMethod = "integers");
 % further plotting function to work with the same picture rather than
 % create a new one.
 hold on;
-theoryprob = [.40315, .40315, .15118, .03779, .004716];
-xvaluesshifted = [0, 1, 2, 3, 4];
+theoryprob = [9/26, 9/26, 3/13, 1/13];
+xvaluesshifted = [0, 1, 2, 3];
 plot(xvaluesshifted, theoryprob, 'o');
 
 % For comparison, plot the theoretical results for a M/M/1 queue.
