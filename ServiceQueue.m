@@ -74,6 +74,8 @@ classdef ServiceQueue < handle
         % currently waiting, how many are currently being served, and how
         % many have been served.
         Log;
+
+        Balking = 0;
     
     end
 
@@ -186,18 +188,24 @@ classdef ServiceQueue < handle
             NInService = obj.NumServers - sum(obj.ServerAvailable);
             NTotal = NWaiting + NInService;  
             randomnumber = rand();
+           
 
             if NTotal == 0   
                 obj.Waiting{end+1} = c;
             elseif NTotal == 1 
                 if randomnumber > (1/3)
                     obj.Waiting{end + 1} = c;
+                else 
+                    obj.Balking = obj.Balking + 1;
                 end
             elseif NTotal == 2    
                 if randomnumber > (2/3)
                     obj.Waiting{end + 1} = c;
+                else 
+                    obj.Balking = obj.Balking + 1;
                 end
            elseif NTotal == 3
+               obj.Balking = obj.Balking + 1;
             end
 
             

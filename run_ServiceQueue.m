@@ -6,7 +6,7 @@
 % Set up to run 100 samples of the queue.
 n_samples = 100;
 
-% Each sample is run up to a maximum time of 1000.
+% Each sample is run up to a maximum time of 1000 minutes.
 max_time = 1000;
 
 % Record how many customers are in the system at the end of each sample.
@@ -47,30 +47,33 @@ NInSystem = vertcat(NInSystemSamples{:});
 % f(*args).
 
 %% Make a picture
+qlength = length(q.Served);
 
-W = zeros(1, 145);
-for n = 1:145
+W = zeros(1, qlength);
+for n = 1:qlength
     W(1, n) = q.Served{1, n}.DepartureTime - q.Served{1, n}.ArrivalTime;
 end
 
-totaltimeinsystem = sum(W)/145;
+totaltimeinsystem = sum(W)/qlength;
 
-WQ = zeros(1, 145);
-for n = 1:145
+WQ = zeros(1, qlength);
+for n = 1:qlength
     WQ(1, n) = q.Served{1, n}.BeginServiceTime - q.Served{1, n}.ArrivalTime;
 end
 
-totaltimewaiting = sum(WQ)/145;
+totaltimewaiting = sum(WQ)/qlength;
 
-TotalServed = zeros(1, 145);
-for n = 1:145
+TotalServed = zeros(1, qlength);
+for n = 1:qlength
     TotalServed(1, n) = q.Served{1, n}.DepartureTime - q.Served{1, n}.BeginServiceTime;
 end
 
-timeserved = sum(TotalServed)/145;
+timeserved = sum(TotalServed)/qlength;
 
 SimulationSteadyStates = [totaltimeinsystem, totaltimewaiting, TotalServed];
 TheoreticalSteadyStates = [6.24, 2.31, 3.94];
+
+
 
 % Start with a histogram.  The result is an empirical PDF, that is, the
 % area of the bar at horizontal index n is proportional to the fraction of
