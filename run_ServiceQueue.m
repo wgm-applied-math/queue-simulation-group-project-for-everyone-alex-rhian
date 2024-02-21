@@ -79,6 +79,8 @@ axw = nexttile(tw);
 hold(axw, "on");
 
 Wh = histogram(axw, W, Normalization = "probability", BinMethod = "auto");
+plot(axw, xline(6.24));
+
 
 figwq = figure();
 twq = tiledlayout(figwq, 1, 1);
@@ -86,6 +88,7 @@ axwq = nexttile(twq);
 hold(axwq, "on");
 
 Wqh = histogram(axwq, WQ, Normalization = "probability", BinMethod = "auto");
+plot(axwq, xline(2.31));
 
 figts = figure();
 tts = tiledlayout(figts, 1, 1);
@@ -93,6 +96,7 @@ axts = nexttile(tts);
 hold(axts, "on");
 
 TSh = histogram(axts, TotalServed, Normalization = "probability", BinMethod = "auto");
+plot(axts, xline(6.24 - 2.31));
 
 % Start with a histogram.  The result is an empirical PDF, that is, the
 % area of the bar at horizontal index n is proportional to the fraction of
