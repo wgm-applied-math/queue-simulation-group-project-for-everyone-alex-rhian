@@ -76,6 +76,8 @@ classdef ServiceQueue < handle
         Log;
 
         Balking = 0;
+
+        Balked;
     
     end
 
@@ -116,12 +118,13 @@ classdef ServiceQueue < handle
             obj.Events = PriorityQueue({}, @(x) x.Time);
             obj.Waiting = {};
             obj.Served = {};
+            obj.Balked = {};
             obj.Log = table( ...
-                Size=[0, 4], ...
+                Size=[0, 5], ...
                 VariableNames=...
-                    {'Time', 'NWaiting', 'NInService', 'NServed'}, ...
+                    {'Time', 'NWaiting', 'NInService', 'NServed', 'NBalked'}, ...
                 VariableTypes=...
-                    {'double', 'int64', 'int64', 'int64'});
+                    {'double', 'int64', 'int64', 'int64', 'int64'});
 
             % The first event is to record the state at time 0 to the log.
             schedule_event(obj, RecordToLog(0));
@@ -192,20 +195,26 @@ classdef ServiceQueue < handle
 
             if NTotal == 0   
                 obj.Waiting{end+1} = c;
+                obj.Balked{end + 1} = 0;
             elseif NTotal == 1 
                 if randomnumber > (1/3)
                     obj.Waiting{end + 1} = c;
+                    obj.Balked{end + 1} = 0;
                 else 
                     obj.Balking = obj.Balking + 1;
+                    obj.Balked{end + 1} = 1;
                 end
             elseif NTotal == 2    
                 if randomnumber > (2/3)
                     obj.Waiting{end + 1} = c;
+                    obj.Balked{end + 1} = 0;
                 else 
                     obj.Balking = obj.Balking + 1;
+                    obj.Balked{end + 1} = 1;
                 end
            elseif NTotal == 3
                obj.Balking = obj.Balking + 1;
+               obj.Balked{end + 1} = 1;
             end
 
             
@@ -325,9 +334,11 @@ classdef ServiceQueue < handle
             NWaiting = length(obj.Waiting);
             NInService = obj.NumServers - sum(obj.ServerAvailable);
             NServed = length(obj.Served);
+            NBalked = length(obj.Balked);
+
 
             % MATLAB-ism: This is how to add a row to the end of a table.
-            obj.Log(end+1, :) = {obj.Time, NWaiting, NInService, NServed};
+            obj.Log(end+1, :) = {obj.Time, NWaiting, NInService, NServed, NBalked};
         end
     end
 end

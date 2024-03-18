@@ -7,7 +7,7 @@
 n_samples = 100;
 
 % Each sample is run up to a maximum time of 1000 minutes.
-max_time = 1000;
+max_time = 480;
 
 % Record how many customers are in the system at the end of each sample.
 NInSystemSamples = cell([1, n_samples]);
@@ -48,6 +48,12 @@ NInSystem = vertcat(NInSystemSamples{:});
 
 %% Make a picture
 qlength = length(q.Served);
+totallength = length(q.Balked);
+
+B = zeros(1, totallength);
+for n = 1:totallength
+    B(1, n) = q.Balked{1, n};
+end
 
 W = zeros(1, qlength);
 for n = 1:qlength
@@ -71,7 +77,17 @@ end
 timeserved = sum(TotalServed)/qlength;
 
 SimulationSteadyStates = [totaltimeinsystem, totaltimewaiting, TotalServed];
-TheoreticalSteadyStates = [6.24, 2.31, 3.94];
+TheoreticalSteadyStates = [6.35, 2.35, 4];
+
+
+figb = figure();
+tb = tiledlayout(figb, 1, 1);
+axb = nexttile(tb);
+hold(axb, "on");
+
+Bh = histogram(axb, B, Normalization = "probability", BinMethod = "auto");
+plot(axb, 'on');
+
 
 figw = figure();
 tw = tiledlayout(figw, 1, 1);
@@ -79,8 +95,7 @@ axw = nexttile(tw);
 hold(axw, "on");
 
 Wh = histogram(axw, W, Normalization = "probability", BinMethod = "auto");
-plot(axw, xline(6.24));
-
+plot(axw, xline(6.35));
 
 figwq = figure();
 twq = tiledlayout(figwq, 1, 1);
@@ -88,7 +103,7 @@ axwq = nexttile(twq);
 hold(axwq, "on");
 
 Wqh = histogram(axwq, WQ, Normalization = "probability", BinMethod = "auto");
-plot(axwq, xline(2.31));
+plot(axwq, xline(2.35));
 
 figts = figure();
 tts = tiledlayout(figts, 1, 1);
@@ -96,7 +111,8 @@ axts = nexttile(tts);
 hold(axts, "on");
 
 TSh = histogram(axts, TotalServed, Normalization = "probability", BinMethod = "auto");
-plot(axts, xline(6.24 - 2.31));
+plot(axts, xline(4));
+ylim([0,1]);
 
 % Start with a histogram.  The result is an empirical PDF, that is, the
 % area of the bar at horizontal index n is proportional to the fraction of
