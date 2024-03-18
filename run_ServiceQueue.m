@@ -49,6 +49,13 @@ NInSystem = vertcat(NInSystemSamples{:});
 %% Make a picture
 qlength = length(q.Served);
 
+totallength = length(q.Balked);
+
+B = zeros(1, totallength);
+for n = 1:totallength
+    B(1, n) = q.Balked{1, n};
+end
+
 W = zeros(1, qlength);
 
 for n = 1:qlength
@@ -78,6 +85,14 @@ timeserved = sum(TotalServed)/qlength;
 
 SimulationSteadyStates = [totaltimeinsystem, totaltimewaiting, timeserved];
 TheoreticalSteadyStates = [5.361, .3024, 5.0586];
+
+figb = figure();
+tb = tiledlayout(figb, 1, 1);
+axb = nexttile(tb);
+hold(axb, "on");
+
+Bh = histogram(axb, B, Normalization = "probability", BinMethod = "auto");
+plot(axb, 'on');
 
 figw = figure();
 tw = tiledlayout(figw, 1, 1);
